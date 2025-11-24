@@ -4,7 +4,14 @@
 		{
 			"label": "Open in Browser",
 			"type": "shell",
-			"command": "open index.html",
+			"command": "open http://localhost:8000/index.html",
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "Open Heatmap in Browser",
+			"type": "shell",
+			"command": "open http://localhost:8000/heatmap.html",
 			"isBackground": false,
 			"group": "build"
 		},

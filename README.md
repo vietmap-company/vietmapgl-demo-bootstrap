@@ -4,8 +4,8 @@ This is a simple web project using Bootstrap 5.
 
 ## Setup
 
-1. Replace `YOUR_API_KEY_HERE` in `js/script.js` with your actual Vietmap API key.
-2. Make sure the `data/VN34City.geojson` file is present in the `data` directory.
+1. Replace `YOUR_API_KEY_HERE` in `js/script.js` and `heatmap.html` with your actual Vietmap API key.
+2. Make sure the `data/VN34City.geojson` files are present in the `data` directory.
 
 ## Structure
 
@@ -20,8 +20,12 @@ You can run this project in two ways:
 1. **Using VS Code Task:**
    - Press `Cmd+Shift+P` (macOS) or `Ctrl+Shift+P` (Windows/Linux).
    - Type "Run Task" and select it.
-   - Choose "Open in Browser".
+   - Choose "Run Server" to start the local server.
+   - Choose "Open in Browser" to view the main map.
+   - Choose "Open Heatmap in Browser" to view the heatmap.
 
-2. **Manual:**
-   - Open the `index.html` file directly in your web browser.
+## Features
+
+- **Administrative Map**: Displays Vietnam's administrative boundaries with random colors and tooltips.
+- **Heatmap**: Visualizes data density using a heatmap layer (see `heatmap.html`).
 
