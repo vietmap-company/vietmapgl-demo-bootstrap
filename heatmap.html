@@ -1,236 +1,282 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>Vietnam Heatmap Layer</title>
     <meta property="og:description" content="Visualize data density using a heatmap layer." />
     <meta charset='utf-8'>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Vietmap GL JS CSS -->
-    <script src="https://unpkg.com/@vietmap/vietmap-gl-js@6.0.1/dist/vietmap-gl.js"></script>
-    <link href="https://unpkg.com/@vietmap/vietmap-gl-js@6.0.1/dist/vietmap-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/@vietmap/vietmap-gl-js@7.0.0-pre.1/dist/vietmap-gl.js"></script>
+    <link href="https://unpkg.com/@vietmap/vietmap-gl-js@7.0.0-pre.1/dist/vietmap-gl.css" rel="stylesheet" />
     <style>
-        body { margin: 0; padding: 0; }
-        html, body, #map { height: 100%; }
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body,
+        #map {
+            height: 100%;
+        }
+
         .controls {
             position: absolute;
             top: 10px;
             left: 10px;
             z-index: 2;
-            background: rgba(255,255,255,0.9);
+            background: rgba(255, 255, 255, 0.9);
             padding: 6px 8px;
             border-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
             font-family: sans-serif;
             font-size: 13px;
         }
     </style>
 </head>
+
 <body>
-<div id="map"></div>
+    <div id="map"></div>
 
-<div class="controls">
-    <label><input type="checkbox" id="toggle-poi"> Hide POI</label>
-</div>
+    <div class="controls">
+        <label><input type="checkbox" id="toggle-poi"> Hide POI</label>
+    </div>
 
-<script>
-    // Initialize Vietmap
-    // Note: Replace 'YOUR_API_KEY_HERE' with your actual Vietmap API key
-    const map = new vietmapgl.Map({
-        container: 'map',
-        style: 'https://maps.vietmap.vn/maps/styles/tm/style.json?apikey=YOUR_API_KEY_HERE',
-        center: [108.2022, 16.0544], // Center of Vietnam
-        zoom: 5
-    });
-
-    map.on('load', () => {
-        // Add a geojson point source.
-        map.addSource('vietnam-heatmap', {
-            'type': 'geojson',
-            'data': './data/heatmap_1.geojson'
+    <script>
+        // Initialize Vietmap
+        // Note: Replace 'YOUR_API_KEY_HERE' with your actual Vietmap API key
+        const map = new vietmapgl.Map({
+            container: 'map',
+            style: 'https://maps.vietmap.vn/maps/styles/tm/style.json?apikey=6411732992b3c4def7a117893215b9163a15e69065c0874d',
+            center: [108.2022, 16.0544], // Center of Vietnam
+            zoom: 5
         });
-
-        // POI toggle: find POI-like symbol layers and toggle visibility
-        const poiToggle = document.getElementById('toggle-poi');
-        let poiLayerIds = [];
-        function findPoiLayers() {
-            const layers = (map.getStyle() && map.getStyle().layers) || [];
-            return layers.filter(l => {
-                if (!l || l.type !== 'symbol') return false;
-                const id = (l.id || '').toLowerCase();
-                const srcLayer = (l['source-layer'] || '').toLowerCase();
-                return id.includes('poi') || srcLayer.includes('poi');
-            }).map(l => l.id);
-        }
-        function updatePoiLayers() {
-            poiLayerIds = findPoiLayers();
-        }
-        // initialize
-        updatePoiLayers();
-        // update if style changes
-        map.on('styledata', () => updatePoiLayers());
-
-        if (poiToggle) {
-            poiToggle.addEventListener('change', (e) => {
-                const hide = e.target.checked;
-                if (poiLayerIds.length === 0) updatePoiLayers();
-                poiLayerIds.forEach(id => {
-                    try {
-                        map.setLayoutProperty(id, 'visibility', hide ? 'none' : 'visible');
-                    } catch (err) {
-                        // layer may not be present yet; ignore
-                    }
-                });
+        map.on('style.load', () => {
+            map.setProjection({
+                type: 'globe', // Set projection to globe
             });
-        }
+        });
+        map.on('load', () => {
+            const TINY_ZOOM_FILE = './data/heatmap_1.tiny.geojson';
+            const MIN_ZOOM_FILE = './data/heatmap_1.min.geojson';
+            const FULL_ZOOM_FILE = './data/heatmap_1.geojson';
 
-        // Build heatmap and circle layer objects first
-        const heatmapLayer = {
-            'id': 'vietnam-heat',
-            'type': 'heatmap',
-            'source': 'vietnam-heatmap',
-            'maxzoom': 15,
-            'paint': {
-                'heatmap-weight': [
-                    'interpolate',
-                    ['linear'],
-                    ['get', 'mag'],
-                    0,
-                    0,
-                    2,
-                    0.1,
-                    4,
-                    0.6,
-                    6,
-                    1
-                ],
-                'heatmap-intensity': [
-                    'interpolate',
-                    ['linear'],
-                    ['zoom'],
-                    0,
-                    1,
-                    10,
-                    2,
-                    15,
-                    4
-                ],
-                'heatmap-color': [
-                    'interpolate',
-                    ['linear'],
-                    ['heatmap-density'],
-                    0,
-                    'rgba(33,102,172,0)',
-                    0.05,
-                    'rgba(33,102,172,0.35)',
-                    0.15,
-                    'rgba(103,169,207,0.45)',
-                    0.3,
-                    'rgba(170,220,100,0.55)',
-                    0.5,
-                    'rgba(255,255,191,0.65)',
-                    0.7,
-                    'rgba(253,141,60,0.8)',
-                    1,
-                    'rgba(178,24,43,0.95)'
-                ],
-                'heatmap-radius': [
-                    'interpolate',
-                    ['linear'],
-                    ['zoom'],
-                    0,
-                    2,
-                    10,
-                    8,
-                    15,
-                    20
-                ],
-                // Increased base opacity so heatmap is more visible
-                'heatmap-opacity': [
-                    'interpolate',
-                    ['linear'],
-                    ['zoom'],
-                    0,
-                    0.75,
-                    8,
-                    0.9,
-                    13,
-                    1,
-                    15,
-                    0
-                ]
+            function getSourceType(zoom) {
+                if (zoom <= 4) return 'tiny';
+                if (zoom <= 8) return 'min';
+                return 'full';
             }
-        };
 
-        const circleLayer = {
-            'id': 'vietnam-point',
-            'type': 'circle',
-            'source': 'vietnam-heatmap',
-            'minzoom': 13,
-            'paint': {
-                'circle-radius': [
-                    'interpolate',
-                    ['linear'],
-                    ['zoom'],
-                    13,
-                    ['interpolate', ['linear'], ['get', 'mag'], 1, 1, 6, 4],
-                    16,
-                    ['interpolate', ['linear'], ['get', 'mag'], 1, 5, 6, 50]
-                ],
-                'circle-color': [
-                    'interpolate',
-                    ['linear'],
-                    ['get', 'mag'],
-                    0,
-                    'rgba(33,102,172,0.45)',
-                    1,
-                    'rgba(33,102,172,0.6)',
-                    2,
-                    'rgba(103,169,207,0.7)',
-                    3,
-                    'rgba(170,220,100,0.8)',
-                    4,
-                    'rgba(255,255,191,0.9)',
-                    5,
-                    'rgba(253,141,60,0.95)',
-                    6,
-                    'rgba(178,24,43,1)'
-                ],
-                'circle-stroke-color': 'white',
-                'circle-stroke-width': 1,
-                'circle-opacity': [
-                    'interpolate',
-                    ['linear'],
-                    ['zoom'],
-                    13,
-                    0,
-                    14,
-                    1
-                ]
+            function getFile(type) {
+                if (type === 'tiny') return TINY_ZOOM_FILE;
+                if (type === 'min') return MIN_ZOOM_FILE;
+                return FULL_ZOOM_FILE;
             }
-        };
 
-        // Find the first symbol layer with a text-field (map labels) so we can
-        // insert heatmap and point layers beneath map text/labels.
-        let firstSymbolId = null;
-        const layers = map.getStyle().layers;
-        for (let i = 0; i < layers.length; i++) {
-            const l = layers[i];
-            if (l.type === 'symbol' && l.layout && l.layout['text-field']) {
-                firstSymbolId = l.id;
-                break;
+            let currentSourceType = getSourceType(map.getZoom());
+
+            // Add a geojson point source.
+            map.addSource('vietnam-heatmap', {
+                'type': 'geojson',
+                'data': getFile(currentSourceType)
+            });
+
+            map.on('zoomend', () => {
+                const zoom = map.getZoom();
+                const targetType = getSourceType(zoom);
+
+                if (targetType !== currentSourceType) {
+                    currentSourceType = targetType;
+                    const file = getFile(targetType);
+                    console.log(`Switching to ${targetType} data: ${file}`);
+                    map.getSource('vietnam-heatmap').setData(file);
+                }
+            });
+
+            // POI toggle: find POI-like symbol layers and toggle visibility
+            const poiToggle = document.getElementById('toggle-poi');
+            let poiLayerIds = [];
+            function findPoiLayers() {
+                const layers = (map.getStyle() && map.getStyle().layers) || [];
+                return layers.filter(l => {
+                    if (!l || l.type !== 'symbol') return false;
+                    const id = (l.id || '').toLowerCase();
+                    const srcLayer = (l['source-layer'] || '').toLowerCase();
+                    return id.includes('poi') || srcLayer.includes('poi');
+                }).map(l => l.id);
             }
-        }
+            function updatePoiLayers() {
+                poiLayerIds = findPoiLayers();
+            }
+            // initialize
+            updatePoiLayers();
+            // update if style changes
+            map.on('styledata', () => updatePoiLayers());
 
-        if (firstSymbolId) {
-            map.addLayer(heatmapLayer, firstSymbolId);
-            // Add circles above heatmap but still below text labels
-            map.addLayer(circleLayer, firstSymbolId);
-        } else {
-            // Fallback: just add normally if no symbol/text layer found
-            map.addLayer(heatmapLayer);
-            map.addLayer(circleLayer);
-        }
-    });
-</script>
+            if (poiToggle) {
+                poiToggle.addEventListener('change', (e) => {
+                    const hide = e.target.checked;
+                    if (poiLayerIds.length === 0) updatePoiLayers();
+                    poiLayerIds.forEach(id => {
+                        try {
+                            map.setLayoutProperty(id, 'visibility', hide ? 'none' : 'visible');
+                        } catch (err) {
+                            // layer may not be present yet; ignore
+                        }
+                    });
+                });
+            }
+
+            // Build heatmap and circle layer objects first
+            const heatmapLayer = {
+                'id': 'vietnam-heat',
+                'type': 'heatmap',
+                'source': 'vietnam-heatmap',
+                'maxzoom': 15,
+                'paint': {
+                    'heatmap-weight': [
+                        'interpolate',
+                        ['linear'],
+                        ['get', 'mag'],
+                        0,
+                        0,
+                        2,
+                        0.1,
+                        4,
+                        0.6,
+                        6,
+                        1
+                    ],
+                    'heatmap-intensity': [
+                        'interpolate',
+                        ['linear'],
+                        ['zoom'],
+                        0,
+                        1,
+                        10,
+                        2,
+                        15,
+                        4
+                    ],
+                    'heatmap-color': [
+                        'interpolate',
+                        ['linear'],
+                        ['heatmap-density'],
+                        0,
+                        'rgba(33,102,172,0)',
+                        0.05,
+                        'rgba(33,102,172,0.35)',
+                        0.15,
+                        'rgba(103,169,207,0.45)',
+                        0.3,
+                        'rgba(170,220,100,0.55)',
+                        0.5,
+                        'rgba(255,255,191,0.65)',
+                        0.7,
+                        'rgba(253,141,60,0.8)',
+                        1,
+                        'rgba(178,24,43,0.95)'
+                    ],
+                    'heatmap-radius': [
+                        'interpolate',
+                        ['linear'],
+                        ['zoom'],
+                        0,
+                        2,
+                        10,
+                        8,
+                        15,
+                        20
+                    ],
+                    // Increased base opacity so heatmap is more visible
+                    'heatmap-opacity': [
+                        'interpolate',
+                        ['linear'],
+                        ['zoom'],
+                        0,
+                        0.75,
+                        8,
+                        0.9,
+                        13,
+                        1,
+                        15,
+                        0
+                    ]
+                }
+            };
+
+            const circleLayer = {
+                'id': 'vietnam-point',
+                'type': 'circle',
+                'source': 'vietnam-heatmap',
+                'minzoom': 13,
+                'paint': {
+                    'circle-radius': [
+                        'interpolate',
+                        ['linear'],
+                        ['zoom'],
+                        13,
+                        ['interpolate', ['linear'], ['get', 'mag'], 1, 1, 6, 4],
+                        16,
+                        ['interpolate', ['linear'], ['get', 'mag'], 1, 5, 6, 50]
+                    ],
+                    'circle-color': [
+                        'interpolate',
+                        ['linear'],
+                        ['get', 'mag'],
+                        0,
+                        'rgba(33,102,172,0.45)',
+                        1,
+                        'rgba(33,102,172,0.6)',
+                        2,
+                        'rgba(103,169,207,0.7)',
+                        3,
+                        'rgba(170,220,100,0.8)',
+                        4,
+                        'rgba(255,255,191,0.9)',
+                        5,
+                        'rgba(253,141,60,0.95)',
+                        6,
+                        'rgba(178,24,43,1)'
+                    ],
+                    'circle-stroke-color': 'white',
+                    'circle-stroke-width': 1,
+                    'circle-opacity': [
+                        'interpolate',
+                        ['linear'],
+                        ['zoom'],
+                        13,
+                        0,
+                        14,
+                        1
+                    ]
+                }
+            };
+
+            // Find the first symbol layer with a text-field (map labels) so we can
+            // insert heatmap and point layers beneath map text/labels.
+            let firstSymbolId = null;
+            const layers = map.getStyle().layers;
+            for (let i = 0; i < layers.length; i++) {
+                const l = layers[i];
+                if (l.type === 'symbol' && l.layout && l.layout['text-field']) {
+                    firstSymbolId = l.id;
+                    break;
+                }
+            }
+
+            if (firstSymbolId) {
+                map.addLayer(heatmapLayer, firstSymbolId);
+                // Add circles above heatmap but still below text labels
+                map.addLayer(circleLayer, firstSymbolId);
+            } else {
+                // Fallback: just add normally if no symbol/text layer found
+                map.addLayer(heatmapLayer);
+                map.addLayer(circleLayer);
+            }
+        });
+    </script>
 </body>
+
 </html>

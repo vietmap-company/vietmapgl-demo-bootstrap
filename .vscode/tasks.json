@@ -16,6 +16,20 @@
 			"group": "build"
 		},
 		{
+			"label": "Open Heatmap FGB in Browser",
+			"type": "shell",
+			"command": "open http://localhost:8000/heatmap_fgb.html",
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "Open Heatmap Tiled in Browser",
+			"type": "shell",
+			"command": "open http://localhost:8000/heatmap_tiled.html",
+			"isBackground": false,
+			"group": "build"
+		},
+		{
 			"label": "Run Server",
 			"type": "shell",
 			"command": "python3 -m http.server 8000",

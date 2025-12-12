@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Vietnam Heatmap Layer (Tiled)</title>
+    <meta property="og:description" content="Visualize data density using a heatmap layer with tiled loading." />
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Vietmap GL JS CSS -->
+    <script src="https://unpkg.com/@vietmap/vietmap-gl-js@6.0.1/dist/vietmap-gl.js"></script>
+    <link href="https://unpkg.com/@vietmap/vietmap-gl-js@6.0.1/dist/vietmap-gl.css" rel="stylesheet" />
+    <style>
+        body { margin: 0; padding: 0; }
+        html, body, #map { height: 100%; }
+        .controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 2;
+            background: rgba(255,255,255,0.9);
+            padding: 6px 8px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            font-family: sans-serif;
+            font-size: 13px;
+        }
+        #loading-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            display: none;
+            z-index: 3;
+        }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+<div id="loading-indicator">Loading data...</div>
+
+<div class="controls">
+    <label><input type="checkbox" id="toggle-poi"> Hide POI</label>
+    <br>
+    <label><input type="checkbox" id="toggle-visible-only" checked> Render Visible Only</label>
+    <div id="debug-info">Loaded tiles: 0</div>
+</div>
+
+<script>
+    // Initialize Vietmap
+    const map = new vietmapgl.Map({
+        container: 'map',
+        style: 'https://maps.vietmap.vn/maps/styles/tm/style.json?apikey=6411732992b3c4def7a117893215b9163a15e69065c0874d',
+        center: [108.2022, 16.0544], // Center of Vietnam
+        zoom: 5
+    });
+
+    const loadedTiles = new Set();
+    const availableTiles = new Set(); // Set to store available tile keys
+    const allCoordinates = []; // Store raw coordinates [lon, lat]
+    const GRID_SIZE = 1.0;
+    let onlyRenderVisible = true;
+
+    map.on('load', async () => {
+        // Load tile index first
+        try {
+            const response = await fetch('./data/tiles/tiles_index.json');
+            const keys = await response.json();
+            keys.forEach(k => availableTiles.add(k));
+            console.log(`Loaded index with ${availableTiles.size} tiles.`);
+        } catch (e) {
+            console.error("Failed to load tile index", e);
+        }
+
+        // Add a geojson point source with empty data initially
+        map.addSource('vietnam-heatmap', {
+            'type': 'geojson',
+            'data': {
+                'type': 'FeatureCollection',
+                'features': []
+            }
+        });
+
+        // POI toggle logic
+        const poiToggle = document.getElementById('toggle-poi');
+        const visibleToggle = document.getElementById('toggle-visible-only');
+        
+        let poiLayerIds = [];
+        function findPoiLayers() {
+            const layers = (map.getStyle() && map.getStyle().layers) || [];
+            return layers.filter(l => {
+                if (!l || l.type !== 'symbol') return false;
+                const id = (l.id || '').toLowerCase();
+                const srcLayer = (l['source-layer'] || '').toLowerCase();
+                return id.includes('poi') || srcLayer.includes('poi');
+            }).map(l => l.id);
+        }
+        function updatePoiLayers() {
+            poiLayerIds = findPoiLayers();
+        }
+        updatePoiLayers();
+        map.on('styledata', () => updatePoiLayers());
+
+        if (poiToggle) {
+            poiToggle.addEventListener('change', (e) => {
+                const hide = e.target.checked;
+                if (poiLayerIds.length === 0) updatePoiLayers();
+                poiLayerIds.forEach(id => {
+                    try {
+                        map.setLayoutProperty(id, 'visibility', hide ? 'none' : 'visible');
+                    } catch (err) { }
+                });
+            });
+        }
+
+        if (visibleToggle) {
+            visibleToggle.addEventListener('change', (e) => {
+                onlyRenderVisible = e.target.checked;
+                updateMapData();
+            });
+        }
+
+        // Heatmap layers
+        const heatmapLayer = {
+            'id': 'vietnam-heat',
+            'type': 'heatmap',
+            'source': 'vietnam-heatmap',
+            'maxzoom': 15,
+            'paint': {
+                'heatmap-weight': ['interpolate', ['linear'], ['get', 'mag'], 0, 0, 2, 0.1, 4, 0.6, 6, 1],
+                'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 0, 1, 10, 2, 15, 4],
+                'heatmap-color': ['interpolate', ['linear'], ['heatmap-density'], 0, 'rgba(33,102,172,0)', 0.05, 'rgba(33,102,172,0.35)', 0.15, 'rgba(103,169,207,0.45)', 0.3, 'rgba(170,220,100,0.55)', 0.5, 'rgba(255,255,191,0.65)', 0.7, 'rgba(253,141,60,0.8)', 1, 'rgba(178,24,43,0.95)'],
+                'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 0, 2, 10, 8, 15, 20],
+                'heatmap-opacity': ['interpolate', ['linear'], ['zoom'], 0, 0.75, 8, 0.9, 13, 1, 15, 0]
+            }
+        };
+
+        const circleLayer = {
+            'id': 'vietnam-point',
+            'type': 'circle',
+            'source': 'vietnam-heatmap',
+            'minzoom': 13,
+            'paint': {
+                'circle-radius': ['interpolate', ['linear'], ['zoom'], 13, ['interpolate', ['linear'], ['get', 'mag'], 1, 1, 6, 4], 16, ['interpolate', ['linear'], ['get', 'mag'], 1, 5, 6, 50]],
+                'circle-color': ['interpolate', ['linear'], ['get', 'mag'], 0, 'rgba(33,102,172,0.45)', 1, 'rgba(33,102,172,0.6)', 2, 'rgba(103,169,207,0.7)', 3, 'rgba(170,220,100,0.8)', 4, 'rgba(255,255,191,0.9)', 5, 'rgba(253,141,60,0.95)', 6, 'rgba(178,24,43,1)'],
+                'circle-stroke-color': 'white',
+                'circle-stroke-width': 1,
+                'circle-opacity': ['interpolate', ['linear'], ['zoom'], 13, 0, 14, 1]
+            }
+        };
+
+        let firstSymbolId = null;
+        const layers = map.getStyle().layers;
+        for (let i = 0; i < layers.length; i++) {
+            const l = layers[i];
+            if (l.type === 'symbol' && l.layout && l.layout['text-field']) {
+                firstSymbolId = l.id;
+                break;
+            }
+        }
+
+        if (firstSymbolId) {
+            map.addLayer(heatmapLayer, firstSymbolId);
+            map.addLayer(circleLayer, firstSymbolId);
+        } else {
+            map.addLayer(heatmapLayer);
+            map.addLayer(circleLayer);
+        }
+
+        // Initial load
+        loadAllParts();
+    });
+
+    // map.on('moveend', loadVisibleTiles); // No longer needed for sequential part loading
+    
+    map.on('moveend', () => {
+        if (onlyRenderVisible) {
+            updateMapData();
+        }
+    });
+
+    function updateMapData() {
+        let coordsToRender = allCoordinates;
+
+        if (onlyRenderVisible) {
+            const bounds = map.getBounds();
+            const sw = bounds.getSouthWest();
+            const ne = bounds.getNorthEast();
+            const west = sw.lng;
+            const south = sw.lat;
+            const east = ne.lng;
+            const north = ne.lat;
+
+            // Manual bounds check is faster for simple points
+            coordsToRender = [];
+            for (let i = 0; i < allCoordinates.length; i++) {
+                const c = allCoordinates[i];
+                const lng = c[0];
+                const lat = c[1];
+                if (lng >= west && lng <= east && lat >= south && lat <= north) {
+                    coordsToRender.push(c);
+                }
+            }
+        }
+
+        // Create a single MultiPoint feature
+        const singleFeature = {
+            type: 'Feature',
+            geometry: {
+                type: 'MultiPoint',
+                coordinates: coordsToRender
+            },
+            properties: {}
+        };
+
+        map.getSource('vietnam-heatmap').setData({
+            type: 'FeatureCollection',
+            features: [singleFeature]
+        });
+        
+        document.getElementById('debug-info').innerText = `Visible Points: ${coordsToRender.length} / ${allCoordinates.length}`;
+    }
+
+    async function loadAllParts() {
+        const TOTAL_PARTS = 30;
+        document.getElementById('loading-indicator').style.display = 'block';
+        document.getElementById('loading-indicator').innerText = 'Loading data parts...';
+
+        for (let i = 1; i <= TOTAL_PARTS; i++) {
+            const filename = `./data/tiles/heatmap_part_${i}.geojson`;
+            try {
+                const response = await fetch(filename);
+                if (!response.ok) continue;
+                
+                const data = await response.json();
+                if (data.features && data.features.length > 0) {
+                    // Extract coordinates from Point features
+                    const newCoords = data.features
+                        .filter(f => f.geometry && f.geometry.type === 'Point')
+                        .map(f => f.geometry.coordinates);
+                    
+                    allCoordinates.push(...newCoords);
+                    
+                    // Update map immediately
+                    updateMapData();
+                }
+            } catch (err) {
+                console.warn(`Failed to load part ${i}`, err);
+            }
+        }
+
+        document.getElementById('loading-indicator').style.display = 'none';
+    }
+</script>
+</body>
+</html>
