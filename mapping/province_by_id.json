@@ -11,7 +11,14 @@
       20.56,
       106.02,
       21.39
-    ]
+    ],
+    "ispeed": {
+      "download": 380.75,
+      "upload": 103.87,
+      "ping": 31.44,
+      "jitter": 3.4
+    },
+    "dvhc_code": "01"
   },
   "166666f9-740a-4f20-9ea0-63544594d5e0": {
     "name": "Hồ Chí Minh",
@@ -25,7 +32,14 @@
       10.35,
       107.03,
       11.16
-    ]
+    ],
+    "ispeed": {
+      "download": 339.74,
+      "upload": 51.22,
+      "ping": 24,
+      "jitter": 5.05
+    },
+    "dvhc_code": "79"
   },
   "c0fc45ab-8b21-4457-984d-1da4ba19c50d": {
     "name": "Đà Nẵng",
@@ -39,7 +53,14 @@
       15.87,
       108.35,
       16.22
-    ]
+    ],
+    "ispeed": {
+      "download": 699.35,
+      "upload": 112.23,
+      "ping": 15,
+      "jitter": 1.37
+    },
+    "dvhc_code": "48"
   },
   "43627e00-cc83-40c9-bfb4-ff6913b0c68e": {
     "name": "Hải Phòng",
@@ -53,7 +74,14 @@
       20.6,
       107.08,
       21.03
-    ]
+    ],
+    "ispeed": {
+      "download": 392.16,
+      "upload": 108.77,
+      "ping": 31,
+      "jitter": 2.15
+    },
+    "dvhc_code": "31"
   },
   "dc3f20aa-8146-44df-89f1-a4f8f5cb5bd9": {
     "name": "Cần Thơ",
@@ -67,7 +95,14 @@
       9.84,
       105.84,
       10.35
-    ]
+    ],
+    "ispeed": {
+      "download": 323.87,
+      "upload": 47.17,
+      "ping": 25,
+      "jitter": 4.99
+    },
+    "dvhc_code": "92"
   },
   "bb461d6a-543a-40ef-a378-f1962d8b5793": {
     "name": "Huế",
@@ -81,7 +116,14 @@
       16.0,
       107.87,
       16.8
-    ]
+    ],
+    "ispeed": {
+      "download": 711.12,
+      "upload": 117.46,
+      "ping": 14,
+      "jitter": 1.34
+    },
+    "dvhc_code": "46"
   },
   "36d650ad-14e1-432f-a508-3b55c909e294": {
     "name": "An Giang",
@@ -95,7 +137,14 @@
       10.28,
       105.58,
       10.97
-    ]
+    ],
+    "ispeed": {
+      "download": 322.06,
+      "upload": 46.47,
+      "ping": 25,
+      "jitter": 5.08
+    },
+    "dvhc_code": "91"
   },
   "50eb2b15-1758-45da-add3-734c22985d80": {
     "name": "Bắc Ninh",
@@ -109,7 +158,14 @@
       20.97,
       106.25,
       21.28
-    ]
+    ],
+    "ispeed": {
+      "download": 389.47,
+      "upload": 107.26,
+      "ping": 31,
+      "jitter": 2.27
+    },
+    "dvhc_code": "24"
   },
   "2436e5da-ac2a-43f9-90a3-4dd60276c81d": {
     "name": "Cà Mau",
@@ -123,7 +179,8 @@
       8.56,
       105.41,
       9.56
-    ]
+    ],
+    "dvhc_code": "96"
   },
   "6906056c-092e-4e4b-a40d-9e44975c4ff4": {
     "name": "Cao Bằng",
@@ -137,7 +194,8 @@
       22.39,
       106.85,
       23.12
-    ]
+    ],
+    "dvhc_code": "04"
   },
   "826cc98d-1822-4504-b3d9-90e25b731eb7": {
     "name": "Đắk Lắk",
@@ -151,7 +209,14 @@
       12.1,
       108.95,
       13.42
-    ]
+    ],
+    "ispeed": {
+      "download": 664.38,
+      "upload": 112.38,
+      "ping": 23.5,
+      "jitter": 1.51
+    },
+    "dvhc_code": "66"
   },
   "f5e01e22-8648-4959-9868-d83b1ce2e01a": {
     "name": "Điện Biên",
@@ -165,7 +230,8 @@
       21.06,
       103.54,
       22.42
-    ]
+    ],
+    "dvhc_code": "11"
   },
   "1815d516-9e01-446f-a2b5-4c16b8f0bf22": {
     "name": "Đồng Nai",
@@ -179,7 +245,14 @@
       10.58,
       107.62,
       11.35
-    ]
+    ],
+    "ispeed": {
+      "download": 313.14,
+      "upload": 43.06,
+      "ping": 25,
+      "jitter": 4.6
+    },
+    "dvhc_code": "75"
   },
   "07ebf02e-ff68-4cf2-be61-2bba333d10bf": {
     "name": "Đồng Tháp",
@@ -193,7 +266,14 @@
       10.12,
       105.97,
       10.8
-    ]
+    ],
+    "ispeed": {
+      "download": 314.24,
+      "upload": 44.16,
+      "ping": 25,
+      "jitter": 4.68
+    },
+    "dvhc_code": "82"
   },
   "272a6f72-82ad-49c0-b3d3-7842c4f87488": {
     "name": "Gia Lai",
@@ -207,7 +287,14 @@
       13.1,
       108.87,
       14.65
-    ]
+    ],
+    "ispeed": {
+      "download": 707.74,
+      "upload": 113.04,
+      "ping": 15,
+      "jitter": 1.35
+    },
+    "dvhc_code": "52"
   },
   "b51ffc6f-e666-4c9f-9291-b27fea09f703": {
     "name": "Hà Tĩnh",
@@ -221,7 +308,8 @@
       17.9,
       106.6,
       18.75
-    ]
+    ],
+    "dvhc_code": "42"
   },
   "2c6d8a05-a8a9-48fb-9055-2240a30e89a7": {
     "name": "Hưng Yên",
@@ -235,7 +323,14 @@
       20.58,
       106.2,
       21.05
-    ]
+    ],
+    "ispeed": {
+      "download": 389.57,
+      "upload": 104.73,
+      "ping": 30,
+      "jitter": 2.51
+    },
+    "dvhc_code": "33"
   },
   "335d8783-b4c9-42cd-968a-3d84a5aaccd2": {
     "name": "Khánh Hòa",
@@ -249,7 +344,14 @@
       11.82,
       109.45,
       12.88
-    ]
+    ],
+    "ispeed": {
+      "download": 655,
+      "upload": 114.42,
+      "ping": 24,
+      "jitter": 1.58
+    },
+    "dvhc_code": "56"
   },
   "b35b28a0-d79c-4d2b-a559-166bab9adc7f": {
     "name": "Lai Châu",
@@ -263,7 +365,8 @@
       21.85,
       103.65,
       22.85
-    ]
+    ],
+    "dvhc_code": "12"
   },
   "fb1a033c-4cae-4967-ba87-7d3e569c7d4b": {
     "name": "Lâm Đồng",
@@ -277,7 +380,14 @@
       11.2,
       108.72,
       12.45
-    ]
+    ],
+    "ispeed": {
+      "download": 654.45,
+      "upload": 114.02,
+      "ping": 24,
+      "jitter": 1.56
+    },
+    "dvhc_code": "68"
   },
   "03d6de45-3775-4d3e-9030-a2bd25a0e4f9": {
     "name": "Lạng Sơn",
@@ -291,7 +401,8 @@
       21.45,
       107.35,
       22.45
-    ]
+    ],
+    "dvhc_code": "20"
   },
   "59bc1701-4dc3-40a9-b6ca-710b993d4e74": {
     "name": "Lào Cai",
@@ -305,7 +416,8 @@
       21.85,
       104.65,
       22.86
-    ]
+    ],
+    "dvhc_code": "15"
   },
   "804c5d63-5442-4710-bf2e-35a05e5b5520": {
     "name": "Nghệ An",
@@ -319,7 +431,14 @@
       18.52,
       105.48,
       20.05
-    ]
+    ],
+    "ispeed": {
+      "download": 368.85,
+      "upload": 107.82,
+      "ping": 31,
+      "jitter": 3.13
+    },
+    "dvhc_code": "40"
   },
   "14fb56ea-7c36-4388-94b8-51af6ee6dcdf": {
     "name": "Ninh Bình",
@@ -333,7 +452,14 @@
       19.85,
       106.15,
       20.45
-    ]
+    ],
+    "ispeed": {
+      "download": 381.94,
+      "upload": 102.47,
+      "ping": 31,
+      "jitter": 3.09
+    },
+    "dvhc_code": "37"
   },
   "7ffeeee3-6f18-4ebb-82df-3e6926d13caf": {
     "name": "Phú Thọ",
@@ -347,7 +473,14 @@
       21.05,
       105.52,
       21.72
-    ]
+    ],
+    "ispeed": {
+      "download": 386.65,
+      "upload": 103.97,
+      "ping": 32,
+      "jitter": 3.52
+    },
+    "dvhc_code": "25"
   },
   "af177879-463a-4fe3-b1d0-6e70a1369a3b": {
     "name": "Quảng Ngãi",
@@ -361,7 +494,14 @@
       14.55,
       109.1,
       15.35
-    ]
+    ],
+    "ispeed": {
+      "download": 696.52,
+      "upload": 107.57,
+      "ping": 15,
+      "jitter": 1.45
+    },
+    "dvhc_code": "51"
   },
   "6973eab2-adbe-4574-9e46-407c893bdfe9": {
     "name": "Quảng Ninh",
@@ -375,7 +515,14 @@
       20.72,
       108.1,
       21.65
-    ]
+    ],
+    "ispeed": {
+      "download": 382.83,
+      "upload": 110.62,
+      "ping": 32,
+      "jitter": 2.11
+    },
+    "dvhc_code": "22"
   },
   "9c2adc90-e878-42ce-b385-3e84bcd76bc9": {
     "name": "Quảng Trị",
@@ -389,7 +536,14 @@
       16.35,
       107.42,
       17.12
-    ]
+    ],
+    "ispeed": {
+      "download": 602.04,
+      "upload": 102.34,
+      "ping": 27,
+      "jitter": 1.7
+    },
+    "dvhc_code": "44"
   },
   "3b87cd78-61e9-4a33-98ce-7f4f09591d2d": {
     "name": "Sơn La",
@@ -403,7 +557,14 @@
       20.62,
       105.02,
       21.85
-    ]
+    ],
+    "ispeed": {
+      "download": 266.15,
+      "upload": 61.14,
+      "ping": 32.1,
+      "jitter": 7.24
+    },
+    "dvhc_code": "14"
   },
   "7277123a-4b09-4c10-826b-975fabde25b4": {
     "name": "Tây Ninh",
@@ -417,7 +578,14 @@
       10.95,
       106.55,
       11.65
-    ]
+    ],
+    "ispeed": {
+      "download": 321,
+      "upload": 47.77,
+      "ping": 25,
+      "jitter": 5.61
+    },
+    "dvhc_code": "80"
   },
   "ba282872-067f-41df-a3dc-6d48514739fc": {
     "name": "Thái Nguyên",
@@ -431,7 +599,14 @@
       21.32,
       106.22,
       22.02
-    ]
+    ],
+    "ispeed": {
+      "download": 346.55,
+      "upload": 98.05,
+      "ping": 32.56,
+      "jitter": 2.49
+    },
+    "dvhc_code": "19"
   },
   "7d09ea4a-dc8f-4470-a6ba-000ffcc972bb": {
     "name": "Thanh Hóa",
@@ -445,7 +620,14 @@
       19.25,
       106.08,
       20.68
-    ]
+    ],
+    "ispeed": {
+      "download": 381.66,
+      "upload": 109.87,
+      "ping": 31,
+      "jitter": 2.81
+    },
+    "dvhc_code": "38"
   },
   "3ed20492-b1fd-49d8-9945-d0f34bb3ee66": {
     "name": "Tuyên Quang",
@@ -459,7 +641,14 @@
       21.72,
       105.65,
       22.72
-    ]
+    ],
+    "ispeed": {
+      "download": 412.97,
+      "upload": 97.35,
+      "ping": 32,
+      "jitter": 4.44
+    },
+    "dvhc_code": "08"
   },
   "b2df6f0a-e95d-4922-a791-9ec4f3d0d05c": {
     "name": "Vĩnh Long",
@@ -473,6 +662,13 @@
       9.92,
       106.22,
       10.35
-    ]
+    ],
+    "ispeed": {
+      "download": 322.38,
+      "upload": 46.28,
+      "ping": 25,
+      "jitter": 4.86
+    },
+    "dvhc_code": "86"
   }
 }
