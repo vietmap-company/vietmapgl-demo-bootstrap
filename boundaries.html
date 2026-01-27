@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Vietnam Boundaries Layer</title>
+    <meta property="og:description" content="Visualize boundaries using vector tiles." />
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://unpkg.com/@vietmap/vietmap-gl-js@6.0.1/dist/vietmap-gl.js"></script>
+    <link href="https://unpkg.com/@vietmap/vietmap-gl-js@6.0.1/dist/vietmap-gl.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body,
+        #map {
+            height: 100%;
+        }
+
+        #province-selector {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        #province-selector select {
+            padding: 5px 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            min-width: 200px;
+        }
+
+        #province-selector label {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        #info-window {
+            position: absolute;
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            pointer-events: none;
+            display: none;
+            max-width: 300px;
+            z-index: 1001;
+            font-size: 12px;
+        }
+
+        #info-window h4 {
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        #info-window table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #info-window td {
+            padding: 4px;
+            border-bottom: 1px solid #eee;
+        }
+
+        #info-window td:first-child {
+            font-weight: bold;
+            color: #666;
+            padding-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="province-selector">
+        <label for="province-filter">Chọn tỉnh:</label>
+        <select id="province-filter">
+            <option value="">-- Chọn một tỉnh --</option>
+        </select>
+    </div>
+    <div id="info-window"></div>
+    <div id="map"></div>
+
+    <script>
+        // Define tile URLs and source layers for each boundary type
+        const BOUNDARIES = {
+            phuong: {
+                urlTile: 'https://local.map.zone/api/tiles/0908c6d7-aa10-4ea0-86f8-ee08ed5e4048/{z}/{x}/{y}.mvt',
+                sourceLayer: '0908c6d7-aa10-4ea0-86f8-ee08ed5e4048',
+                mappingFile: 'mapping/ward_by_id.json'
+            },
+            tinh: {
+                urlTile: 'https://local.map.zone/api/tiles/42cc5480-8d95-42dc-b6d7-16a7a9a23f48/{z}/{x}/{y}.mvt',
+                sourceLayer: '42cc5480-8d95-42dc-b6d7-16a7a9a23f48',
+                mappingFile: 'mapping/province_by_id.json'
+            }
+        };
+
+        // Load mapping data
+        let mappingData = {};
+        let provinceData = {};
+        let provinceWardMapping = {};
+        let currentBoundaryType = 'tinh'; // Start with province layer
+        let selectedProvinceCode = '';
+        let selectedProvinceSlug = '';
+        let selectedWardIds = [];
+
+        async function loadMappingData(boundaryType) {
+            const config = BOUNDARIES[boundaryType];
+            try {
+                const response = await fetch(config.mappingFile);
+                mappingData = await response.json();
+                console.log(`Loaded ${Object.keys(mappingData).length} entries for ${boundaryType}`);
+            } catch (error) {
+                console.error('Error loading mapping data:', error);
+                mappingData = {};
+            }
+        }
+
+        async function loadProvinceList() {
+            try {
+                const response = await fetch('mapping/province.json');
+                provinceData = await response.json();
+                populateProvinceDropdown();
+            } catch (error) {
+                console.error('Error loading province list:', error);
+            }
+        }
+
+        async function loadProvinceWardMapping() {
+            try {
+                const response = await fetch('mapping/province_ward_mapping.json');
+                provinceWardMapping = await response.json();
+                console.log(`Loaded province ward mapping with ${Object.keys(provinceWardMapping).length} provinces`);
+            } catch (error) {
+                console.error('Error loading province ward mapping:', error);
+            }
+        }
+
+        function populateProvinceDropdown() {
+            const select = document.getElementById('province-filter');
+            // Clear existing options
+            select.innerHTML = '<option value="">-- Chọn một tỉnh --</option>';
+
+            // Sort provinces by code
+            const sortedProvinces = Object.entries(provinceData).sort((a, b) => {
+                return parseInt(a[0]) - parseInt(b[0]);
+            });
+
+            // Add province options
+            sortedProvinces.forEach(([code, province]) => {
+                const option = document.createElement('option');
+                option.value = code;
+                option.textContent = province.name_with_type;
+                select.appendChild(option);
+            });
+        }
+
+        // Zoom to province using bbox from province data
+        function zoomToProvince() {
+            if (!selectedProvinceCode) return;
+
+            const province = provinceData[selectedProvinceCode];
+            if (!province || !province.bbox) {
+                console.log('No bbox found for province:', selectedProvinceCode);
+                return;
+            }
+
+            const bbox = province.bbox; // [minLng, minLat, maxLng, maxLat]
+            map.fitBounds([
+                [bbox[0], bbox[1]], // Southwest
+                [bbox[2], bbox[3]]  // Northeast
+            ], {
+                padding: 50,
+                duration: 1000
+            });
+
+            console.log(`Zoomed to ${province.name}: ${bbox}`);
+        }
+
+        // Generate color from parent_code
+        function getColorFromParentCode(parentCode) {
+            // Use a hash function to generate consistent colors for each parent_code
+            let hash = 0;
+            const str = String(parentCode);
+            for (let i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            }
+
+            // Generate HSL color with good saturation and lightness
+            const hue = Math.abs(hash % 360);
+            const saturation = 60 + (Math.abs(hash) % 20); // 60-80%
+            const lightness = 45 + (Math.abs(hash >> 8) % 15); // 45-60%
+
+            return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        }
+
+        // Hash string (UUID) to generate hue value (0-360)
+        function hashStringToHue(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            return Math.abs(hash % 360);
+        }
+
+        // Generate color from ward ID using hash function
+        function createWardColorExpression() {
+            // For ward layer - each ward gets unique color based on ID (UUID)
+            if (selectedWardIds.length > 0) {
+                // Build case expression with individual colors for each ward ID
+                const cases = [];
+                selectedWardIds.forEach(id => {
+                    const hue = hashStringToHue(id);
+                    const saturation = 65 + (Math.abs(hashStringToHue(id + 'sat')) % 15); // 65-80%
+                    const lightness = 45 + (Math.abs(hashStringToHue(id + 'light')) % 15); // 45-60%
+
+                    cases.push(['==', ['get', 'id'], id]);
+                    cases.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
+                });
+
+                // Default color for wards not in selected province
+                cases.push('#CCCCCC');
+
+                return ['case', ...cases];
+            } else {
+                return '#CCCCCC';
+            }
+        }
+
+        // Create line opacity expression
+        function createLineOpacityExpression() {
+            // For province layer, use default opacity
+            if (currentBoundaryType === 'tinh') {
+                return 0.3;
+            }
+
+            // For ward layer - selected wards have higher opacity
+            if (selectedWardIds.length > 0) {
+                return [
+                    'case',
+                    ['in', ['get', 'id'], ['literal', selectedWardIds]],
+                    1.0, // Selected province wards: 100%
+                    0.3  // Other wards: 30%
+                ];
+            } else {
+                return 0.3;
+            }
+        }
+
+        // Get color expression for boundaries
+        function createColorExpression() {
+            // For province layer, use default color
+            if (currentBoundaryType === 'tinh') {
+                return '#088';
+            }
+
+            // For ward layer - use ward color expression
+            return createWardColorExpression();
+        }
+
+        const map = new vietmapgl.Map({
+            container: 'map',
+            style: 'https://maps.vietmap.vn/maps/styles/tm/style.json?apikey=YOUR_API_KEY_HERE',
+            center: [108.2022, 16.0544],
+            zoom: 5
+        });
+
+        // Find the first label layer to insert boundaries below it
+        function findFirstLabelLayer() {
+            const layers = map.getStyle().layers;
+            // Find first symbol layer (labels)
+            for (let i = 0; i < layers.length; i++) {
+                if (layers[i].type === 'symbol') {
+                    return layers[i].id;
+                }
+            }
+            return undefined;
+        }
+
+        async function addBoundaryLayers(boundaryType) {
+            const config = BOUNDARIES[boundaryType];
+            currentBoundaryType = boundaryType;
+
+            // Load mapping data for this boundary type
+            await loadMappingData(boundaryType);
+
+            // Remove existing ward layers if they exist
+            if (map.getLayer('boundaries-fill')) {
+                map.removeLayer('boundaries-fill');
+            }
+            if (map.getLayer('boundaries-line')) {
+                map.removeLayer('boundaries-line');
+            }
+            if (map.getSource('boundaries-source')) {
+                map.removeSource('boundaries-source');
+            }
+
+            // Remove province border layer if exists
+            if (map.getLayer('province-border')) {
+                map.removeLayer('province-border');
+            }
+            if (map.getSource('province-source')) {
+                map.removeSource('province-source');
+            }
+
+            // Add source
+            map.addSource('boundaries-source', {
+                type: 'vector',
+                tiles: [config.urlTile]
+            });
+
+            // Find first label layer to place boundaries below it
+            const firstLabelLayer = findFirstLabelLayer();
+
+            // Fill layer for polygon boundaries
+            map.addLayer({
+                'id': 'boundaries-fill',
+                'type': 'fill',
+                'source': 'boundaries-source',
+                'source-layer': config.sourceLayer,
+                'paint': {
+                    'fill-color': createColorExpression(),
+                    'fill-opacity': 0.4
+                }
+            }, firstLabelLayer); // Insert before first label layer
+
+            // Line layer for boundary outlines
+            map.addLayer({
+                'id': 'boundaries-line',
+                'type': 'line',
+                'source': 'boundaries-source',
+                'source-layer': config.sourceLayer,
+                'paint': {
+                    'line-color': '#999',
+                    'line-width': 1,
+                    'line-opacity': createLineOpacityExpression()
+                }
+            }, firstLabelLayer); // Insert before first label layer
+
+            // If viewing wards and a province is selected, add province border
+            if (boundaryType === 'phuong' && selectedProvinceCode) {
+                addProvinceBorder();
+            }
+        }
+
+        // Add province border layer on top of wards but below labels
+        function addProvinceBorder() {
+            // Add province source
+            map.addSource('province-source', {
+                type: 'vector',
+                tiles: [BOUNDARIES.tinh.urlTile]
+            });
+
+            // Find first label layer
+            const firstLabelLayer = findFirstLabelLayer();
+
+            // Add thick border for selected province
+            map.addLayer({
+                'id': 'province-border',
+                'type': 'line',
+                'source': 'province-source',
+                'source-layer': BOUNDARIES.tinh.sourceLayer,
+                'paint': {
+                    'line-color': '#FF0000',
+                    'line-width': 4
+                },
+                'filter': ['==', ['get', 'code'], selectedProvinceCode]
+            }, firstLabelLayer); // Insert before first label layer
+        }
+
+        map.on('load', async () => {
+            // Load province list and ward mapping
+            await loadProvinceList();
+            await loadProvinceWardMapping();
+
+            // Load default boundary type (province)
+            await addBoundaryLayers('tinh');
+            setupHoverEvents();
+        });
+
+        // Add event listener for province filter
+        document.getElementById('province-filter').addEventListener('change', async (e) => {
+            selectedProvinceCode = e.target.value;
+
+            if (selectedProvinceCode) {
+                // Get province slug from provinceData
+                const province = provinceData[selectedProvinceCode];
+                selectedProvinceSlug = province ? province.slug : '';
+
+                // Get ward_ids from province ward mapping
+                const mappingEntry = provinceWardMapping[selectedProvinceSlug];
+                selectedWardIds = mappingEntry ? mappingEntry.ward_ids : [];
+                console.log(`Selected province: ${selectedProvinceSlug}, ward count: ${selectedWardIds.length}`);
+
+                // Zoom to province bbox immediately
+                zoomToProvince();
+
+                // Province selected - switch to ward layer
+                currentBoundaryType = 'phuong';
+                await addBoundaryLayers('phuong');
+            } else {
+                // Reset selection
+                selectedProvinceSlug = '';
+                selectedWardIds = [];
+
+                // No province selected - show province layer
+                currentBoundaryType = 'tinh';
+                await addBoundaryLayers('tinh');
+
+                // Reset map view
+                map.flyTo({
+                    center: [108.2022, 16.0544],
+                    zoom: 5,
+                    duration: 1000
+                });
+            }
+        });
+
+        function updateLayerColors() {
+            // Update fill layer paint
+            if (map.getLayer('boundaries-fill')) {
+                map.setPaintProperty('boundaries-fill', 'fill-color', createColorExpression());
+            }
+            // Update line layer paint
+            if (map.getLayer('boundaries-line')) {
+                map.setPaintProperty('boundaries-line', 'line-opacity', createLineOpacityExpression());
+            }
+        }
+
+        function setupHoverEvents() {
+            const infoWindow = document.getElementById('info-window');
+
+            // Change cursor on hover
+            map.on('mouseenter', 'boundaries-fill', () => {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+
+            map.on('mouseleave', 'boundaries-fill', () => {
+                map.getCanvas().style.cursor = '';
+                infoWindow.style.display = 'none';
+            });
+
+            // Show info window on hover
+            map.on('mousemove', 'boundaries-fill', (e) => {
+                if (e.features.length > 0) {
+                    const feature = e.features[0];
+                    const properties = feature.properties;
+
+                    // Try to get additional data from mapping
+                    let displayData = { ...properties };
+
+                    // Check if we have an id property and mapping data available
+                    if (properties.id && mappingData[properties.id]) {
+                        const mappedInfo = mappingData[properties.id];
+                        displayData = { ...properties, ...mappedInfo };
+                    }
+
+                    // Build HTML content
+                    let content = '<h4>Boundary Information</h4><table>';
+                    for (const [key, value] of Object.entries(displayData)) {
+                        content += `<tr><td>${key}</td><td>${value}</td></tr>`;
+                    }
+                    content += '</table>';
+
+                    infoWindow.innerHTML = content;
+                    infoWindow.style.display = 'block';
+                    infoWindow.style.left = e.originalEvent.pageX + 10 + 'px';
+                    infoWindow.style.top = e.originalEvent.pageY + 10 + 'px';
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,478 @@
+{
+  "680e3798-e3e1-4d2f-9fcd-0e6128a988b7": {
+    "name": "Hà Nội",
+    "slug": "ha-noi",
+    "type": "thanh-pho",
+    "name_with_type": "Thành phố Hà Nội",
+    "code": "11",
+    "id": "680e3798-e3e1-4d2f-9fcd-0e6128a988b7",
+    "bbox": [
+      105.28,
+      20.56,
+      106.02,
+      21.39
+    ]
+  },
+  "166666f9-740a-4f20-9ea0-63544594d5e0": {
+    "name": "Hồ Chí Minh",
+    "slug": "ho-chi-minh",
+    "type": "thanh-pho",
+    "name_with_type": "Thành phố Hồ Chí Minh",
+    "code": "12",
+    "id": "166666f9-740a-4f20-9ea0-63544594d5e0",
+    "bbox": [
+      106.36,
+      10.35,
+      107.03,
+      11.16
+    ]
+  },
+  "c0fc45ab-8b21-4457-984d-1da4ba19c50d": {
+    "name": "Đà Nẵng",
+    "slug": "da-nang",
+    "type": "thanh-pho",
+    "name_with_type": "Thành phố Đà Nẵng",
+    "code": "13",
+    "id": "c0fc45ab-8b21-4457-984d-1da4ba19c50d",
+    "bbox": [
+      107.82,
+      15.87,
+      108.35,
+      16.22
+    ]
+  },
+  "43627e00-cc83-40c9-bfb4-ff6913b0c68e": {
+    "name": "Hải Phòng",
+    "slug": "hai-phong",
+    "type": "thanh-pho",
+    "name_with_type": "Thành phố Hải Phòng",
+    "code": "14",
+    "id": "43627e00-cc83-40c9-bfb4-ff6913b0c68e",
+    "bbox": [
+      106.36,
+      20.6,
+      107.08,
+      21.03
+    ]
+  },
+  "dc3f20aa-8146-44df-89f1-a4f8f5cb5bd9": {
+    "name": "Cần Thơ",
+    "slug": "can-tho",
+    "type": "thanh-pho",
+    "name_with_type": "Thành phố Cần Thơ",
+    "code": "15",
+    "id": "dc3f20aa-8146-44df-89f1-a4f8f5cb5bd9",
+    "bbox": [
+      105.22,
+      9.84,
+      105.84,
+      10.35
+    ]
+  },
+  "bb461d6a-543a-40ef-a378-f1962d8b5793": {
+    "name": "Huế",
+    "slug": "hue",
+    "type": "thanh-pho",
+    "name_with_type": "Thành phố Huế",
+    "code": "16",
+    "id": "bb461d6a-543a-40ef-a378-f1962d8b5793",
+    "bbox": [
+      107.01,
+      16.0,
+      107.87,
+      16.8
+    ]
+  },
+  "36d650ad-14e1-432f-a508-3b55c909e294": {
+    "name": "An Giang",
+    "slug": "an-giang",
+    "type": "tinh",
+    "name_with_type": "Tỉnh An Giang",
+    "code": "17",
+    "id": "36d650ad-14e1-432f-a508-3b55c909e294",
+    "bbox": [
+      104.8,
+      10.28,
+      105.58,
+      10.97
+    ]
+  },
+  "50eb2b15-1758-45da-add3-734c22985d80": {
+    "name": "Bắc Ninh",
+    "slug": "bac-ninh",
+    "type": "tinh",
+    "name_with_type": "Tỉnh Bắc Ninh",
+    "code": "18",
+    "id": "50eb2b15-1758-45da-add3-734c22985d80",
+    "bbox": [
+      105.9,
+      20.97,
+      106.25,
+      21.28
+    ]
+  },
+  "2436e5da-ac2a-43f9-90a3-4dd60276c81d": {
+    "name": "Cà Mau",
+    "slug": "ca-mau",
+    "type": "tinh",
+    "name_with_type": "Tỉnh Cà Mau",
+    "code": "19",
+    "id": "2436e5da-ac2a-43f9-90a3-4dd60276c81d",
+    "bbox": [
+      104.72,
+      8.56,
+      105.41,
+      9.56
+    ]
+  },
+  "6906056c-092e-4e4b-a40d-9e44975c4ff4": {
+    "name": "Cao Bằng",
+    "slug": "cao-bang",
+    "type": "tinh",
+    "name_with_type": "Tỉnh Cao Bằng",
+    "code": "20",
+    "id": "6906056c-092e-4e4b-a40d-9e44975c4ff4",
+    "bbox": [
+      105.62,
+      22.39,
+      106.85,
+      23.12
+    ]
+  },
+  "826cc98d-1822-4504-b3d9-90e25b731eb7": {
+    "name": "Đắk Lắk",
+    "slug": "dak-lak",
+    "type": "tinh",
+    "name_with_type": "Tỉnh Đắk Lắk",
+    "code": "21",
+    "id": "826cc98d-1822-4504-b3d9-90e25b731eb7",
+    "bbox": [
+      107.45,
+      12.1,
+      108.95,
+      13.42
+    ]
+  },
+  "f5e01e22-8648-4959-9868-d83b1ce2e01a": {
+    "name": "Điện Biên",
+    "slug": "dien-bien",
+    "type": "tinh",
+    "name_with_type": "Tỉnh Điện Biên",
+    "code": "22",
+    "id": "f5e01e22-8648-4959-9868-d83b1ce2e01a",
+    "bbox": [
+      102.56,
+      21.06,
+      103.54,
+      22.42
+    ]
+  },
+  "1815d516-9e01-446f-a2b5-4c16b8f0bf22": {
+    "name": "Đồng Nai",
+    "slug": "dong-nai",
+    "type": "tinh",
+    "name_with_type": "Tỉnh Đồng Nai",
+    "code": "23",
+    "id": "1815d516-9e01-446f-a2b5-4c16b8f0bf22",
+    "bbox": [
+      106.73,
+      10.58,
+      107.62,
+      11.35
+    ]
+  },
+  "07ebf02e-ff68-4cf2-be61-2bba333d10bf": {
+    "name": "Đồng Tháp",
+    "slug": "dong-thap",
+    "type": "tinh",
+    "name_with_type": "Tỉnh Đồng Tháp",
+    "code": "24",
+    "id": "07ebf02e-ff68-4cf2-be61-2bba333d10bf",
+    "bbox": [
+      105.12,
+      10.12,
+      105.97,
+      10.8
+    ]
+  },
+  "272a6f72-82ad-49c0-b3d3-7842c4f87488": {
+    "name": "Gia Lai",
+    "slug": "gia-lai",
+    "type": "tinh",
+    "name_with_type": "Tỉnh Gia Lai",
+    "code": "25",
+    "id": "272a6f72-82ad-49c0-b3d3-7842c4f87488",
+    "bbox": [
+      107.45,
+      13.1,
+      108.87,
+      14.65
+    ]
+  },
+  "b51ffc6f-e666-4c9f-9291-b27fea09f703": {
+    "name": "Hà Tĩnh",
+    "slug": "ha-tinh",
+    "type": "tinh",
+    "name_with_type": "Tỉnh Hà Tĩnh",
+    "code": "26",
+    "id": "b51ffc6f-e666-4c9f-9291-b27fea09f703",
+    "bbox": [
+      105.45,
+      17.9,
+      106.6,
+      18.75
+    ]
+  },
+  "2c6d8a05-a8a9-48fb-9055-2240a30e89a7": {
+    "name": "Hưng Yên",
+    "slug": "hung-yen",
+    "type": "tinh",
+    "name_with_type": "Tỉnh Hưng Yên",
+    "code": "27",
+    "id": "2c6d8a05-a8a9-48fb-9055-2240a30e89a7",
+    "bbox": [
+      105.85,
+      20.58,
+      106.2,
+      21.05
+    ]
+  },
+  "335d8783-b4c9-42cd-968a-3d84a5aaccd2": {
+    "name": "Khánh Hòa",
+    "slug": "khanh-hoa",
+    "type": "tinh",
+    "name_with_type": "Tỉnh Khánh Hòa",
+    "code": "28",
+    "id": "335d8783-b4c9-42cd-968a-3d84a5aaccd2",
+    "bbox": [
+      108.65,
+      11.82,
+      109.45,
+      12.88
+    ]
+  },
+  "b35b28a0-d79c-4d2b-a559-166bab9adc7f": {
+    "name": "Lai Châu",
+    "slug": "lai-chau",
+    "type": "tinh",
+    "name_with_type": "Tỉnh Lai Châu",
+    "code": "29",
+    "id": "b35b28a0-d79c-4d2b-a559-166bab9adc7f",
+    "bbox": [
+      102.45,
+      21.85,
+      103.65,
+      22.85
+    ]
+  },
+  "fb1a033c-4cae-4967-ba87-7d3e569c7d4b": {
+    "name": "Lâm Đồng",
+    "slug": "lam-dong",
+    "type": "tinh",
+    "name_with_type": "Tỉnh Lâm Đồng",
+    "code": "30",
+    "id": "fb1a033c-4cae-4967-ba87-7d3e569c7d4b",
+    "bbox": [
+      107.25,
+      11.2,
+      108.72,
+      12.45
+    ]
+  },
+  "03d6de45-3775-4d3e-9030-a2bd25a0e4f9": {
+    "name": "Lạng Sơn",
+    "slug": "lang-son",
+    "type": "tinh",
+    "name_with_type": "Tỉnh Lạng Sơn",
+    "code": "31",
+    "id": "03d6de45-3775-4d3e-9030-a2bd25a0e4f9",
+    "bbox": [
+      106.15,
+      21.45,
+      107.35,
+      22.45
+    ]
+  },
+  "59bc1701-4dc3-40a9-b6ca-710b993d4e74": {
+    "name": "Lào Cai",
+    "slug": "lao-cai",
+    "type": "tinh",
+    "name_with_type": "Tỉnh Lào Cai",
+    "code": "32",
+    "id": "59bc1701-4dc3-40a9-b6ca-710b993d4e74",
+    "bbox": [
+      103.62,
+      21.85,
+      104.65,
+      22.86
+    ]
+  },
+  "804c5d63-5442-4710-bf2e-35a05e5b5520": {
+    "name": "Nghệ An",
+    "slug": "nghe-an",
+    "type": "tinh",
+    "name_with_type": "Tỉnh Nghệ An",
+    "code": "33",
+    "id": "804c5d63-5442-4710-bf2e-35a05e5b5520",
+    "bbox": [
+      103.87,
+      18.52,
+      105.48,
+      20.05
+    ]
+  },
+  "14fb56ea-7c36-4388-94b8-51af6ee6dcdf": {
+    "name": "Ninh Bình",
+    "slug": "ninh-binh",
+    "type": "tinh",
+    "name_with_type": "Tỉnh Ninh Bình",
+    "code": "34",
+    "id": "14fb56ea-7c36-4388-94b8-51af6ee6dcdf",
+    "bbox": [
+      105.55,
+      19.85,
+      106.15,
+      20.45
+    ]
+  },
+  "7ffeeee3-6f18-4ebb-82df-3e6926d13caf": {
+    "name": "Phú Thọ",
+    "slug": "phu-tho",
+    "type": "tinh",
+    "name_with_type": "Tỉnh Phú Thọ",
+    "code": "35",
+    "id": "7ffeeee3-6f18-4ebb-82df-3e6926d13caf",
+    "bbox": [
+      104.78,
+      21.05,
+      105.52,
+      21.72
+    ]
+  },
+  "af177879-463a-4fe3-b1d0-6e70a1369a3b": {
+    "name": "Quảng Ngãi",
+    "slug": "quang-ngai",
+    "type": "tinh",
+    "name_with_type": "Tỉnh Quảng Ngãi",
+    "code": "36",
+    "id": "af177879-463a-4fe3-b1d0-6e70a1369a3b",
+    "bbox": [
+      108.25,
+      14.55,
+      109.1,
+      15.35
+    ]
+  },
+  "6973eab2-adbe-4574-9e46-407c893bdfe9": {
+    "name": "Quảng Ninh",
+    "slug": "quang-ninh",
+    "type": "tinh",
+    "name_with_type": "Tỉnh Quảng Ninh",
+    "code": "37",
+    "id": "6973eab2-adbe-4574-9e46-407c893bdfe9",
+    "bbox": [
+      106.45,
+      20.72,
+      108.1,
+      21.65
+    ]
+  },
+  "9c2adc90-e878-42ce-b385-3e84bcd76bc9": {
+    "name": "Quảng Trị",
+    "slug": "quang-tri",
+    "type": "tinh",
+    "name_with_type": "Tỉnh Quảng Trị",
+    "code": "38",
+    "id": "9c2adc90-e878-42ce-b385-3e84bcd76bc9",
+    "bbox": [
+      106.42,
+      16.35,
+      107.42,
+      17.12
+    ]
+  },
+  "3b87cd78-61e9-4a33-98ce-7f4f09591d2d": {
+    "name": "Sơn La",
+    "slug": "son-la",
+    "type": "tinh",
+    "name_with_type": "Tỉnh Sơn La",
+    "code": "39",
+    "id": "3b87cd78-61e9-4a33-98ce-7f4f09591d2d",
+    "bbox": [
+      103.25,
+      20.62,
+      105.02,
+      21.85
+    ]
+  },
+  "7277123a-4b09-4c10-826b-975fabde25b4": {
+    "name": "Tây Ninh",
+    "slug": "tay-ninh",
+    "type": "tinh",
+    "name_with_type": "Tỉnh Tây Ninh",
+    "code": "40",
+    "id": "7277123a-4b09-4c10-826b-975fabde25b4",
+    "bbox": [
+      105.85,
+      10.95,
+      106.55,
+      11.65
+    ]
+  },
+  "ba282872-067f-41df-a3dc-6d48514739fc": {
+    "name": "Thái Nguyên",
+    "slug": "thai-nguyen",
+    "type": "tinh",
+    "name_with_type": "Tỉnh Thái Nguyên",
+    "code": "41",
+    "id": "ba282872-067f-41df-a3dc-6d48514739fc",
+    "bbox": [
+      105.52,
+      21.32,
+      106.22,
+      22.02
+    ]
+  },
+  "7d09ea4a-dc8f-4470-a6ba-000ffcc972bb": {
+    "name": "Thanh Hóa",
+    "slug": "thanh-hoa",
+    "type": "tinh",
+    "name_with_type": "Tỉnh Thanh Hóa",
+    "code": "42",
+    "id": "7d09ea4a-dc8f-4470-a6ba-000ffcc972bb",
+    "bbox": [
+      104.42,
+      19.25,
+      106.08,
+      20.68
+    ]
+  },
+  "3ed20492-b1fd-49d8-9945-d0f34bb3ee66": {
+    "name": "Tuyên Quang",
+    "slug": "tuyen-quang",
+    "type": "tinh",
+    "name_with_type": "Tỉnh Tuyên Quang",
+    "code": "43",
+    "id": "3ed20492-b1fd-49d8-9945-d0f34bb3ee66",
+    "bbox": [
+      104.85,
+      21.72,
+      105.65,
+      22.72
+    ]
+  },
+  "b2df6f0a-e95d-4922-a791-9ec4f3d0d05c": {
+    "name": "Vĩnh Long",
+    "slug": "vinh-long",
+    "type": "tinh",
+    "name_with_type": "Tỉnh Vĩnh Long",
+    "code": "44",
+    "id": "b2df6f0a-e95d-4922-a791-9ec4f3d0d05c",
+    "bbox": [
+      105.72,
+      9.92,
+      106.22,
+      10.35
+    ]
+  }
+}
