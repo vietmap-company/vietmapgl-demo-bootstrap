@@ -191,22 +191,25 @@
             return Math.abs(hash % 360);
         }
 
-        // Generate color from ward ID using hash function
+        // Create ward color expression based on download speed
         function createWardColorExpression() {
-            // For ward layer - each ward gets unique color based on ID (UUID)
+            // For ward layer - color based on download speed
             if (selectedWardIds.length > 0) {
-                // Build case expression with individual colors for each ward ID
+                // Build case expression with colors for each ward based on download speed
                 const cases = [];
-                selectedWardIds.forEach(id => {
-                    const hue = hashStringToHue(id);
-                    const saturation = 65 + (Math.abs(hashStringToHue(id + 'sat')) % 15); // 65-80%
-                    const lightness = 45 + (Math.abs(hashStringToHue(id + 'light')) % 15); // 45-60%
 
-                    cases.push(['==', ['get', 'id'], id]);
-                    cases.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
+                selectedWardIds.forEach(id => {
+                    const wardData = mappingData[id];
+                    if (wardData && wardData.ispeed) {
+                        const download = wardData.ispeed.download;
+                        const color = getColorFromDownload(download);
+
+                        cases.push(['==', ['get', 'id'], id]);
+                        cases.push(color);
+                    }
                 });
 
-                // Default color for wards not in selected province
+                // Default color for wards not in selected province or without data
                 cases.push('#CCCCCC');
 
                 return ['case', ...cases];
