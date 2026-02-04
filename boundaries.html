@@ -282,7 +282,7 @@
 
         const map = new vietmapgl.Map({
             container: 'map',
-            style: 'https://maps.vietmap.vn/maps/styles/tm/style.json?apikey=YOUR_API_KEY',
+            style: 'https://maps.vietmap.vn/maps/styles/tm/style.json?apikey=YOUR_VIETMAP_API_KEY',
             center: [108.2022, 16.0544],
             zoom: 5
         });
@@ -342,7 +342,7 @@
                 'source-layer': config.sourceLayer,
                 'paint': {
                     'fill-color': createColorExpression(),
-                    'fill-opacity': 0.4
+                    'fill-opacity': 1.0
                 }
             }, firstLabelLayer); // Insert before first label layer
 
@@ -354,8 +354,8 @@
                 'source-layer': config.sourceLayer,
                 'paint': {
                     'line-color': '#999',
-                    'line-width': 1,
-                    'line-opacity': createLineOpacityExpression()
+                    'line-width': 2,
+                    'line-opacity': 1.0
                 }
             }, firstLabelLayer); // Insert before first label layer
 
@@ -384,7 +384,7 @@
                 'source-layer': BOUNDARIES.tinh.sourceLayer,
                 'paint': {
                     'line-color': '#FF0000',
-                    'line-width': 4
+                    'line-width': 6
                 },
                 'filter': ['==', ['get', 'code'], selectedProvinceCode]
             }, firstLabelLayer); // Insert before first label layer
