@@ -280,6 +280,107 @@
             return createWardColorExpression();
         }
 
+        const PATTERN_NAME_MAP = {
+            dot: 'pattern-dot',
+            dotted: 'pattern-dot',
+            hatch: 'pattern-hatch',
+            diagonal: 'pattern-hatch'
+        };
+
+        function registerFillPatterns(mapInstance) {
+            const patterns = [
+                { name: 'pattern-none', image: createTransparentPatternImage() },
+                { name: 'pattern-dot', image: createDotPatternImage() },
+                { name: 'pattern-hatch', image: createHatchPatternImage() }
+            ];
+
+            patterns.forEach(({ name, image }) => {
+                if (!mapInstance.hasImage(name)) {
+                    mapInstance.addImage(name, image, { pixelRatio: 2 });
+                }
+            });
+        }
+
+        function generatePatternImage(size, drawFn) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, size, size);
+            drawFn(ctx, size);
+            return ctx.getImageData(0, 0, size, size);
+        }
+
+        function createTransparentPatternImage() {
+            return generatePatternImage(2, () => { });
+        }
+
+        function createDotPatternImage() {
+            return generatePatternImage(12, (ctx, size) => {
+                ctx.fillStyle = 'rgba(0,0,0,0)';
+                ctx.fillRect(0, 0, size, size);
+                ctx.fillStyle = 'rgba(30,58,138,0.35)';
+                ctx.beginPath();
+                ctx.arc(size / 2, size / 2, 1.5, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        function createHatchPatternImage() {
+            return generatePatternImage(12, (ctx, size) => {
+                ctx.strokeStyle = 'rgba(15,23,42,0.45)';
+                ctx.lineWidth = 1.5;
+
+                ctx.beginPath();
+                ctx.moveTo(-size / 2, size);
+                ctx.lineTo(size / 2, 0);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(0, size);
+                ctx.lineTo(size, 0);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(size / 2, size);
+                ctx.lineTo(size + size / 2, 0);
+                ctx.stroke();
+            });
+        }
+
+        function extractPatternKey(data) {
+            if (!data) return '';
+            const raw =
+                data.fillPattern ||
+                data.fill_pattern ||
+                data.pattern ||
+                data.fillStyle ||
+                data.fill_style ||
+                (data.style && (data.style.fillPattern || data.style.pattern)) ||
+                '';
+            return typeof raw === 'string' ? raw.toLowerCase() : '';
+        }
+
+        function createFillPatternExpression() {
+            const cases = [];
+
+            for (const [id, data] of Object.entries(mappingData)) {
+                const patternKey = extractPatternKey(data);
+                const patternName = PATTERN_NAME_MAP[patternKey];
+                if (!patternName) continue;
+
+                cases.push(['==', ['get', 'id'], id]);
+                cases.push(patternName);
+            }
+
+            if (cases.length === 0) {
+                return 'pattern-none';
+            }
+
+            cases.push('pattern-none');
+            return ['case', ...cases];
+        }
+
         const map = new vietmapgl.Map({
             container: 'map',
             style: 'https://maps.vietmap.vn/maps/styles/tm/style.json?apikey=YOUR_VIETMAP_API_KEY',
@@ -309,6 +410,9 @@
             // Remove existing ward layers if they exist
             if (map.getLayer('boundaries-fill')) {
                 map.removeLayer('boundaries-fill');
+            }
+            if (map.getLayer('boundaries-fill-pattern')) {
+                map.removeLayer('boundaries-fill-pattern');
             }
             if (map.getLayer('boundaries-line')) {
                 map.removeLayer('boundaries-line');
@@ -343,6 +447,18 @@
                 'paint': {
                     'fill-color': createColorExpression(),
                     'fill-opacity': 1.0
+                }
+            }, firstLabelLayer); // Insert before first label layer
+
+            // Pattern overlay layer for polygon boundaries
+            map.addLayer({
+                'id': 'boundaries-fill-pattern',
+                'type': 'fill',
+                'source': 'boundaries-source',
+                'source-layer': config.sourceLayer,
+                'paint': {
+                    'fill-opacity': 1.0,
+                    'fill-pattern': createFillPatternExpression()
                 }
             }, firstLabelLayer); // Insert before first label layer
 
@@ -391,6 +507,7 @@
         }
 
         map.on('load', async () => {
+            registerFillPatterns(map);
             // Load province list and ward mapping
             await loadProvinceList();
             await loadProvinceWardMapping();
@@ -442,6 +559,9 @@
             // Update fill layer paint
             if (map.getLayer('boundaries-fill')) {
                 map.setPaintProperty('boundaries-fill', 'fill-color', createColorExpression());
+            }
+            if (map.getLayer('boundaries-fill-pattern')) {
+                map.setPaintProperty('boundaries-fill-pattern', 'fill-pattern', createFillPatternExpression());
             }
             // Update line layer paint
             if (map.getLayer('boundaries-line')) {

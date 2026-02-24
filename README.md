@@ -29,3 +29,25 @@ You can run this project in two ways:
 - **Administrative Map**: Displays Vietnam's administrative boundaries with random colors and tooltips.
 - **Heatmap**: Visualizes data density using a heatmap layer (see `heatmap.html`).
 
+## Polygon Pattern Overrides
+
+You can control the polygon textures that appear on the boundaries map by adding a `fillPattern` property to your mapping JSON files (for example, `mapping/province_by_id.json` or `mapping/ward_by_id.json`). Accepted values are `dot` and `hatch`.
+
+```json
+{
+   "01": {
+      "name_with_type": "Thành phố Hà Nội",
+      "slug": "ha-noi",
+      "ispeed": {
+         "download": 320,
+         "upload": 150,
+         "ping": 8,
+         "jitter": 2
+      },
+      "fillPattern": "hatch"
+   }
+}
+```
+
+The pattern layer sits on top of the existing color fill, so you can mix color-coded metrics with texture cues.
+
